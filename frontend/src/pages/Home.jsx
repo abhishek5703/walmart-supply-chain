@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
 const fadeUp = {
@@ -12,6 +12,17 @@ const fadeUp = {
 };
 
 const Home = () => {
+  const navigate = useNavigate();
+
+  const handleGetStarted = () => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      navigate("/dashboard");
+    } else {
+      navigate("/login");
+    }
+  };
+
   return (
     <div className="relative min-h-screen flex flex-col bg-gradient-to-br from-white via-gray-50 to-gray-100 font-sans">
       <main className="px-6 md:px-20 py-16 flex justify-center">
@@ -28,19 +39,21 @@ const Home = () => {
             <p className="text-lg text-gray-600 mt-4 max-w-2xl mx-auto">
               AI-driven insights, automated supplier scoring, and real-time supply chain visibility — all in one platform.
             </p>
-            <Link
-              to="/signup"
-              className="mt-6 inline-block px-6 py-3 bg-green-500 hover:bg-green-600 text-white rounded-full text-sm font-semibold transition"
+            <button
+              onClick={handleGetStarted}
+              className="mt-6 inline-block px-6 py-3 bg-green-500 hover:bg-green-600 text-white rounded-full text-sm font-semibold transition cursor-pointer"
             >
               Get Started
-            </Link>
+            </button>
           </motion.div>
 
           <section className="grid md:grid-cols-2 gap-8">
             {["Our Mission", "Retailer Challenges", "What Makes Us Different"].map((title, i) => (
               <motion.div
                 key={i}
-                className={`bg-white rounded-2xl shadow-lg p-6 transition-transform duration-300 hover:-translate-y-1 hover:shadow-2xl ${i === 2 ? "md:col-span-2" : ""}`}
+                className={`bg-white rounded-2xl shadow-lg p-6 transition-transform duration-300 hover:-translate-y-1 hover:shadow-2xl ${
+                  i === 2 ? "md:col-span-2" : ""
+                }`}
                 custom={i + 1}
                 initial="hidden"
                 whileInView="visible"

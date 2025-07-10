@@ -1,8 +1,26 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { FaUserCircle } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import Axios from "../utils/Axios"; // Make sure this file exists and is correctly configured
 
 const Login = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await Axios.post("/auth/login", { email, password });
+      localStorage.setItem("token", res.data.token);
+      navigate("/dashboard");
+    } catch (err) {
+      alert("Invalid email or password");
+      console.error(err);
+    }
+  };
+
   return (
     <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-green-100 via-green-50 to-green-200 px-4">
       <motion.div
@@ -17,13 +35,16 @@ const Login = () => {
         <h2 className="text-4xl font-extrabold text-center text-gray-800 mb-6">
           Welcome Back
         </h2>
-        <form className="space-y-6">
+        <form onSubmit={handleLogin} className="space-y-6">
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-1">Email Address</label>
             <input
               type="email"
               placeholder="you@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent transition"
+              required
             />
           </div>
           <div>
@@ -31,7 +52,10 @@ const Login = () => {
             <input
               type="password"
               placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent transition"
+              required
             />
           </div>
           <button
@@ -42,7 +66,10 @@ const Login = () => {
           </button>
         </form>
         <p className="text-center text-sm text-gray-600 mt-6">
-          Don’t have an account? <a href="/signup" className="text-green-600 font-semibold hover:underline">Sign up here</a>
+          Don’t have an account?{" "}
+          <a href="/signup" className="text-green-600 font-semibold hover:underline">
+            Sign up here
+          </a>
         </p>
       </motion.div>
     </div>
