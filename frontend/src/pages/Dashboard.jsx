@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { FaWarehouse, FaTags, FaPlus, FaUpload } from "react-icons/fa";
 import { MdRecommend } from "react-icons/md";
+import Axios from "../utils/Axios";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -14,7 +15,7 @@ const fadeUp = {
 
 const Dashboard = () => {
   const [products, setProducts] = useState([]);
-  const [form, setForm] = useState({ name: "", description: "", price: "", image: "" });
+  const [form, setForm] = useState({ name: "", description: "", price: "", stock: "", image: "" });
   const [imagePreview, setImagePreview] = useState(null);
 
   const handleChange = (e) => {
@@ -28,18 +29,24 @@ const Dashboard = () => {
     }
   };
 
-  const handleAddProduct = (e) => {
+  const handleAddProduct = async (e) => {
     e.preventDefault();
-    const newProduct = {
-      id: Date.now(),
-      name: form.name,
-      description: form.description,
-      price: form.price,
-      image: imagePreview,
-    };
-    setProducts([newProduct, ...products]);
-    setForm({ name: "", description: "", price: "", image: "" });
-    setImagePreview(null);
+    const formData = new FormData();
+    formData.append("description", form.description);
+    formData.append("price", form.price);
+    formData.append("stock", form.stock);
+    formData.append("image", form.image);
+    try {
+      const res = await Axios.post("/products", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      const newProduct = res.data.product;
+      setProducts([newProduct, ...products]);
+      setForm({ name: "", description: "", price: "", stock: "", image: "" });
+      setImagePreview(null);
+    } catch (err) {
+      alert(err.response?.data?.message || "Failed to add product");
+    }
   };
 
   const handleAIAnalysis = (product) => {
@@ -90,6 +97,15 @@ const Dashboard = () => {
             name="price"
             placeholder="Product Price"
             value={form.price}
+            onChange={handleChange}
+            required
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-400"
+          />
+          <input
+            type="number"
+            name="stock"
+            placeholder="Product Stock"
+            value={form.stock}
             onChange={handleChange}
             required
             className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-400"
