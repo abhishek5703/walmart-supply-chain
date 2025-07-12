@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { FaUserPlus } from "react-icons/fa";
 import Axios from "../utils/Axios";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast"; 
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -15,7 +16,6 @@ const Signup = () => {
     dob: "",
   });
 
-  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
@@ -25,14 +25,13 @@ const Signup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError("");
 
     try {
-      const res = await Axios.post("/auth/signup", formData);
-      alert("Signup successful. Please log in.");
+      await Axios.post("/auth/signup", formData);
+      toast.success("Signup successful! Please log in.");
       navigate("/login");
     } catch (err) {
-      setError(err.response?.data?.message || "Signup failed.");
+      toast.error(err.response?.data?.message || "Signup failed.");
     } finally {
       setLoading(false);
     }
@@ -102,8 +101,6 @@ const Signup = () => {
             onChange={handleChange}
             className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-400"
           />
-
-          {error && <p className="text-red-600 text-sm">{error}</p>}
 
           <button
             type="submit"

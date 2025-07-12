@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { FaUserCircle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import Axios from "../utils/Axios"; // Make sure this file exists and is correctly configured
+import Axios from "../utils/Axios";
+import toast from "react-hot-toast"; 
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -14,10 +15,10 @@ const Login = () => {
     try {
       const res = await Axios.post("/auth/login", { email, password });
       localStorage.setItem("token", res.data.token);
+      toast.success("Login successful ✅"); 
       navigate("/dashboard");
     } catch (err) {
-      alert("Invalid email or password");
-      console.error(err);
+      toast.error(err.response?.data?.message || "Invalid email or password ❌");
     }
   };
 
@@ -60,14 +61,14 @@ const Login = () => {
           </div>
           <button
             type="submit"
-            className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-bold shadow-md transition-transform transform hover:scale-[1.02]"
+            className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-bold shadow-md transition-transform transform hover:scale-[1.02] cursor-pointer"
           >
             Log In
           </button>
         </form>
         <p className="text-center text-sm text-gray-600 mt-6">
           Don’t have an account?{" "}
-          <a href="/signup" className="text-green-600 font-semibold hover:underline">
+          <a href="/signup" className="text-green-600 font-semibold hover:underline cursor-pointer">
             Sign up here
           </a>
         </p>
