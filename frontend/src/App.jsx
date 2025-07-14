@@ -9,8 +9,12 @@ import Profile from './pages/Profile';
 import Sellers from './pages/Sellers'; 
 import PrivateRoute from './components/PrivateRoute';
 import SellerProfile from "./pages/SellerProfile"; 
+import React, { useState } from "react";
+import BotButton from "./components/BotButton";
+import ChatBox from "./components/ChatBox";
 
 function App() {
+  const [chatOpen, setChatOpen] = useState(false);
   return (
     <div className="min-h-screen bg-gray-100">
       <Navbar />
@@ -27,6 +31,8 @@ function App() {
           },
         }}
       />
+      {chatOpen && <ChatBox onClose={() => setChatOpen(false)} />}
+      <BotButton onClick={() => setChatOpen(true)} />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
